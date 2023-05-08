@@ -1,0 +1,235 @@
+Failover is the ability to switch automatically and seamlessly to a reliable backup system. When a component or primary system fails
+docker-compose exec php_chat_backend php artisan serve
+
+netstat -ano | find
+netstat -ano -p tcp | find "9001"
+uwsgi It is named after the Web Server Gateway Interface
+CREATE USER 'username'@'host' IDENTIFIED WITH authentication_plugin BY 'password';
+ipconfig /displaydns
+composer require laravel/sail --dev
+php artisan sail:install
+./vendor/bin/sail up
+27
+./vendor/bin/sail up
+alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
+php artisan sail:install
+docker exec -it php_chat_backend bash
+php artisan serve --host=localhost --port=605
+php artisan config:cache
+php artisan key:generate
+
+php var/www/artisan migrate
+chmod -R 755 storage
+chown -R var/www /var/www/storage #chanage the owner of /var/www/storage to var/www www directory is the owner of storage directory
+"var/www" is the user that will become the owner of the "/var/www/storage" general chown -h user:group file
+docker exec -it mysql_chat_db bash
+mysql -u root -p
+show databases;
+GRANT ALL ON laravel_web.* TO 'laraveldocker'@'%' IDENTIFIED BY 'your_strong_laravel_docker_password';
+mysql -h 127.0.0.1 -P 3304 -u root -p
+FLUSH PRIVILEGES
+mysqld --verbose --help | grep bind-address
+docker run --name=mysql_chat_db -p3306:3306 -v data_:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -e MYSQL_ROOT_HOST:"%" -d mysql/mysql:8.0.11
+
+
+link php and mysql
+docker exec -it php_chat_backend bash
+php artisan migrate
+php artisan tinker
+\DB::select('show tables');
+\DB::table('migrations')->get();
+
+CREATE USER 'root' IDENTIFIED BY 'root';
+GRANT ALL PRIVILEGES ON *.* TO 'root' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+JWT
+composer require tymon/jwt-auth
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+php artisan jwt:secret
+
+
+
+npm create vite
+cd chat_app_react
+npm install
+npm run dev
+npm install redux
+npm install @reduxJs/toolkit
+npm install --save-dev ts-jest
+npm install --save-dev jest @types/jest @babel/preset-typescript @babel/preset-env
+
+
+babel.config.json:
+
+{
+"presets": [
+[
+"@babel/preset-env",
+{
+"targets": {
+"node": "current"
+}
+}
+],
+"@babel/preset-typescript"
+]
+}
+
+
+tasklist | findstr 80
+netstat -aon | findstr 9260
+npm install react-router-dom
+composer require tymon/jwt-auth
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+php artisan jwt:secret
+php artisan make:controller AuthController
+docker kill $(docker ps -q)
+
+cors issue
+installation
+composer require fruitcake/laravel-cors
+
+registering
+\Fruitcake\Cors\HandleCors::class, in app/Http/Kernel.php
+
+configuration
+return [
+'paths' => ['api/*'],
+'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+'allowed_origins' => ['http://127.0.0.1:3001'],
+'allowed_origins_patterns' => [],
+'allowed_headers' => ['Content-Type', 'Authorization'],
+'exposed_headers' => [],
+'max_age' => 0,
+'supports_credentials' => true,
+];
+
+in onfig/cors.php and reset config
+
+php artisan ui vue --auth
+php artisan --version
+php artisan config:clear
+php artisan config:cache
+php artisan migrate
+php artisan route:list
+php artisan make:model modeName -fmc (factory migration controller)
+
+php artisan tinker
+factory(modelClassName)->create(10)
+factory(App\Model\Users::class)->create(10)
+
+polymorphic relation
+from migration
+Schema::create('comments', function (Blueprint $table) {
+$table->id();
+$table->text('body');
+#major two attr any table with this, other table will relate to it (it model will have
+#a method commentable that return $this->morphTo())
+$table->unsignedBigInteger('commentable_id');
+$table->string('commentable_type');
+#major two attr
+$table->timestamps();
+});
+
+class that define the relationship
+class Comment extends Model
+{
+public function commentable()
+{
+return $this->morphTo();
+}
+}
+
+
+
+In the related models (Post and Photo), you need to define the inverse of the polymorphic relationship using the morphMany() | morphOne() method
+
+class Post extends Model
+{
+public function comments()
+{
+return $this->morphMany(Comment::class, 'commentable');
+}
+}
+
+class Photo extends Model
+{
+public function comments()
+{
+return $this->morphMany(Comment::class, 'commentable');Photo has Comment
+}
+}
+
+$post = Post::find(1);
+$comments = $post->comments;
+
+
+
+
+many to many relationship is achieve through tags (tags belong to many to many relationship)
+
+Here are the steps to create a many-to-many polymorphic relation in Laravel:
+
+
+1. Create the database tables
+Create a table for the main entity, e.g. posts.
+Create a table for the related entities, e.g. tags and categories,user_id.
+Create a pivot table to store the relationships, e.g. taggables and categorizables, user_idables.
+
+2.Define the relationships in the model classes:
+In the Post model, define a morphToMany() relationship with the Tag and Category models.
+In the Tag and Category models, define a morphedByMany() relationship with the Post model.
+
+
+Schema::create('taggables', function (Blueprint $table) { # this is pivot table
+$table->unsignedBigInteger('tag_id');
+$table->unsignedBigInteger('taggable_id');
+$table->string('taggable_type');
+$table->timestamps();
+$table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
+$table->unique(['tag_id', 'taggable_id', 'taggable_type']);
+$table->index(['tag_id', 'taggable_id', 'taggable_type']);
+});
+
+Here's an example code for defining the relationships in the model classes:
+
+class Post extends Model
+{
+public function tags()
+{
+return $this->morphToMany(Tag::class, 'taggable');
+}
+
+public function categories()
+{
+return $this->morphToMany(Category::class, 'categorizable');
+}
+}
+
+class Tag extends Model
+{
+public function posts()
+{
+return $this->morphedByMany(Post::class, 'taggable');
+}
+}
+
+class Category extends Model
+{
+public function posts()
+{
+return $this->morphedByMany(Post::class, 'categorizable');
+}
+}
+
+
+CREATE TABLE orders (
+id INT PRIMARY KEY,
+customer_id INT,
+total DECIMAL(10, 2),
+FOREIGN KEY (customer_id) REFERENCES customers(id)
+ON DELETE CASCADE
+);
+
+CREATE INDEX idx_orders_customer_id <index name> ON orders<table> (customer_id<column>);

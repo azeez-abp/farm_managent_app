@@ -1,0 +1,152 @@
+version: '3.8'
+networks:
+  app-network: #Network all conatiner together
+    driver: 'bridge'
+
+
+######################################
+
+ 
+services: 
+  ######Nginx servie####################################
+  chap_server:
+    image: nginx:stable-alpine
+    platform: linux/x86_64
+    restart: unless-stopped
+    container_name: nginx_chat_server
+    tty: true
+    #command: nginx -g "daemon off;"
+    # links:
+    #   - "chat_runtime"
+    ports:
+      # - "602:80"
+      # - "603:80"
+     # - "5173:80"
+      - "605:80"
+      # - "448:443"
+    volumes:
+      - .:/var/www
+      #- ./nginx/nginx-production.conf:/etc/nginx/conf.d/aconf.conf #the configuration load in alphabetical order so use a letter
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/aconf.conf 
+    # depends_on: 
+    #     - chat_runtime
+       # - chat_db
+    networks:
+      - app-network
+    
+  ##########################################
+     
+  ############mysql##############################
+  chat_db:
+    image: mysql:8.0.11
+    platform: linux/x86_64
+    container_name: mysql_chat_db
+    restart: unless-stopped
+    tty: true #eletypewriter
+    ports:
+      - "6306:3306"
+    environment:
+      #ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_USER: ${DB_USERNAME}
+      #MYSQL_HOST: ${DB_HOST}
+      MYSQL_DATABASE: chat_db
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: chat_db
+    volumes:
+      - ./mysql/mysql.cnf:/etc/mysql/conf.d/
+      - ./data_/mysql:/var/lib/mysql
+    #   - ./docker/use/mysql/my.cnf:/etc/mysql/my.cnf 
+    networks:
+      - app-network
+  ##########################################
+   #######phpmyadmin###################################
+  chat_pma:
+      depends_on:
+          - chat_db
+      image: phpmyadmin/phpmyadmin
+      links:
+        - "chat_db"
+      container_name: chat_pma_view_db
+      environment:
+          - PMA_ARBITRARY= 1
+          - PMA_HOST=mysql_chat_db #container name of the db to connect to
+          - PMA_USER=${DB_USERNAME}        #the username in the database 
+          - PMA_PASSWORD=${DB_PASSWORD}      # the password in the database
+          - PMA_ROOT_PASSWORD=${DB_PASSWORD} #root password of the database
+          - PMA_PORT=3306          # port of the database
+    
+      networks: 
+        - app-network
+      ports:
+          - 9999:80
+####################################################cache
+  redis_master:
+    image: redis:latest
+    ports:
+      - 6379:80
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - /redis_store:/bitnami
+    networks: 
+      - app-network
+  
+  ########php service##################################
+  chat_runtime: #this is the name link to   fastcgi_pass chat_runtime:9000; in nginx config 
+    build:
+      context: .
+      args:
+        - APP_ENV=${APP_ENV}
+      dockerfile: Dockerfile
+  
+   # image: n.com/php
+   # command: sh -c "composer install && chmod -R 644 bootstrap/cache -f && chmod -R 755 storage -f && chmod -R 755 vendor -f"
+    container_name: php_chat_backend
+    restart: unless-stopped
+    tty: true
+    # ports:
+    #   - "9000:80"  # service port to image port
+    environment:
+      SERVICE_NAME: chat_runtime_
+      SERVICE_TAGS: dev
+      APP_ENV: ${APP_ENV}
+      APP_NAME: ${APP_NAME}
+    working_dir: /var/www
+    volumes:
+         - ./:/var/www 
+         - ./php/php.ini:/usr/local/etc/php/php.ini
+       #  - ./php/zz-docker.conf:/usr/local/etc/php-fpm.d/zz-docker.conf #chenge the port of php-fpm to 9001
+    depends_on:
+      - chat_db
+      - chat_pma
+      - chap_server
+
+      
+    networks:
+      - app-network
+
+
+
+
+ ################Node###########################################
+
+  # chat_node_engine: #this is the name link to   fastcgi_pass chat_runtime:9000; in nginx config 
+  #   build:
+  #     context: .
+  #     dockerfile: node
+
+  #   # image: n.com/php
+  #   # command: sh -c "composer install && chmod -R 644 bootstrap/cache -f && chmod -R 755 storage -f && chmod -R 755 vendor -f"
+  #   container_name: chat_node_engines
+  #   restart: unless-stopped
+
+  #########volume##########################################
+volumes:
+  data_:
+
+# secrets:
+#   db:
+#    file: '.env'

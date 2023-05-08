@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: #additional information
+  name: php8_1_mn
+  identifier: chat_app
+spec: #desire behaviour
+  selector: #label for pod
+    matchLabels:
+      app: php8_1_ssm
+  template: #describe the pod to be created
+    metadata:
+      labels:
+        app: php8_1
+    spec:
+      containers:
+      - name: php8_1
+        image: <Image>
+        volumeMounts:
+          - name: php8_1_mount
+            mountPath: "../../."
+        initContainers:
+          - name: install
+            image: <iamge name>
+            volumeMounts:
+            - name: php8_1_mount
+              mountPath: "../../."
+            command:
+              - "cp"
+              - "r"
+              - "../../."
+              - "var/wwww"
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+
+# The parts of the Deployment that are typically specified in a Service manifest file include:
+# metadata.name: The name of the Service.
+# spec.selector: The labels used to select which Pods the Service should route traffic to. This should match the labels specified in the Deployment's spec.selector field.
+# spec.ports: The ports that should be exposed by the Service. This can include the same ports as the Deployment's spec.containers.ports field.
+# Additionally, you can also specify the type of the Service (spec.type), which can be ClusterIP, NodePort, or LoadBalancer. The ClusterIP type is the default and

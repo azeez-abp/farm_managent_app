@@ -1,0 +1,146 @@
+@import url('notify.css');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.elem-group-login{
+    display: flex;
+    background-color: #000;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.elem-group-login-wrapper{
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    background-color: #00000044;
+}
+.elem-group-login-wrapper-content{
+    width: 40%;
+}
+.elem-group-login-wrapper-content >div{
+    margin: 0.6em 0;
+}
+
+.login-button{
+    background: rgba(0,0,0,.5);
+    box-shadow: 0 0 6px 0 #fff;
+    width: 100%;
+    border-radius: 7px;
+    height: 42px;
+    color: #fff;
+    font-size: 23px;
+    font-family: cursive;
+    text-align: center;
+    position: relative;
+    
+}
+.login-button > .fa{
+    position: absolute;
+    left: 0.4em;
+    top: 5px;
+    border: 2px solid;
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    padding: 2px;
+}
+.demarcation{
+    color: #fff;
+    text-align: center;
+}
+.demarcation::before, .demarcation::after{
+    content: '';
+    position: absolute;
+    width: 35%;
+    height: 2px;
+    top: 12px;
+    background-color: #fff;
+}
+.demarcation::before{
+   left: 0;
+ }
+ .demarcation::after{
+    right: 0;
+  }
+  .elem-group-login-wrapper-content  .fa-refresh {
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    /* height: 0; */
+    position: absolute;
+    margin: 0;
+  }
+  .captcha{
+    width: 30%; 
+    float:left;
+  }
+  .captcha:active{
+    width: 30%; 
+    float:left;
+  }
+.login-with{
+    display: flex;
+    justify-content: space-between;
+}
+.login-with > button{
+    margin: 0 0.22em;
+}
+.input{
+    width: 100%;
+    height: 42px;
+    border-radius: 7px;
+    padding: 0.22em;
+    font-size: 1.5em;
+    font-family: cursive;
+    background: #000;
+    color: #fff;
+    outline: 1px solid #fff;
+}
+.input:focus{
+    outline: 2px solid rgb(0, 128, 0);
+    
+}
+.input:active{
+    outline: 2px solid rgb(0, 128, 0);
+    
+}
+
+
+@media screen and (max-width:675px) {
+    .elem-group-login-wrapper-content{
+        width: 100%;
+        padding: 2em
+    }
+    .login-button > i{
+        display: none;
+    }
+    .login-button >span {
+        transform: translateX(50%);
+    }
+}
+
+
+.rotate{
+    animation: spin 600ms cubic-bezier(0, 0.14, 1, 1.08) infinite;
+}
+
+@keyframes spin{
+    0% {
+        transform: rotate(0deg);
+        transform-origin: center;
+    }
+    100%{
+        transform: rotate(360deg);
+        transform-origin: center;
+    }
+}
+
+
+button{
+    cursor: pointer;
+}
+

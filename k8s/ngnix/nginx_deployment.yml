@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ngninx_backed_1 #file name
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ngninx_backed_1 #pod lable
+      tier: ngnix_server_1
+  template:
+    metadata:
+      labels:
+        app: ngnix_1_pod
+    spec:
+      containers:
+      - name: myapp
+        image: ngninx
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 801
+          name: http
+          protocol: TCP

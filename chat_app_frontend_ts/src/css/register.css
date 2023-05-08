@@ -1,0 +1,79 @@
+.register{
+    background: #000a;
+    border-radius: 8px;
+    height: auto;
+    box-shadow: 0 0 12px;
+    width: 40%;
+    margin: 0 auto;
+}
+.register header{
+    width: 100%;
+    background-color: #0c8f06;
+    min-height: 30px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+.register header p{
+    padding: 5px;
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+.register main div{
+    margin: 3px 0;
+    border-radius: 8px;
+}
+main >div:nth-child(2) p{
+    cursor: pointer;
+}
+
+
+.register main > div:nth-child(4)>p:active > input:checked{
+    
+}
+.register input:not([type=checkbox]){
+    width: 80%;
+    height: 42px;
+    border-radius: 4px;
+    outline: 2px solid #fff;
+    background: #000;
+    /* color: #fff; */
+    color: #fff;
+    font-size: 1.3rem;
+    margin: 3px 0;
+}
+.register input:not([type=checkbox]):focus{
+    outline: 2px solid #0f0a;
+    transition: 600ms ease;
+
+}
+
+.btn-submit{
+    width: 80%;
+    border: 2px solid;
+    margin: 0 auto;
+    border-radius: 4px;
+    padding: 2px;
+}
+.btn-submit button{
+    width: 100%;
+}
+.register main p{
+    text-align: left;
+    width: 80%;
+    margin: -9px auto;
+    padding: 8px 0;
+
+}
+.register main p:not(.remember){
+
+    transform: translateY(35px);
+    transition: transform 300ms;
+}
+.register main p.moveup{
+    transform: translateY(0px);
+    transition: transform 300ms;
+}
+@media (max-width:40em) {
+   
+    
+}
